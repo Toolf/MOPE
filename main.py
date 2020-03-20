@@ -63,7 +63,7 @@ def create_matrix():
 
 
 ###
-### Cochran's C test
+### Критерій Кохрена
 ###
 y = [
     [random.randint(min(y_bounds), max(y_bounds)) for i in range(m)]
