@@ -79,21 +79,22 @@ while True:
     crit_c = c_critical(confidence_prob, m - 1, N)
     print(f"Критерій Кохрена: {round(stat_c, 3)}")
     print(
-        f"Критичне значення критерію Кохрена (для {confidence_prob}): {round(crit_c, 3)}"
+        f"Критичне значення критерію Кохрена (для {confidence_prob}): {round(crit_c, m)}"
     )
 
     if stat_c < crit_c:
         print("Дисперсія однорідна.")
         break
+    if m > 23: exit()
 
     print("Дисперсія не однорідна. Збільшуємо m")
-    m += 1
+    m += 1 # if Gp(stat_c) > Gt(crit_c) m+1
     for yi in y:
         yi.append(random.randint(min(y_bounds), max(y_bounds)))
 
 my = [sum(y[i]) / len(y[i]) for i in range(len(y))]
 xn_col = np.array(list(zip(*xn)))
-# regression by encoded values
+
 beta = [sum(my * xn_col[i]) / len(my * xn_col[i]) for i in range(N)]
 yn = [sum(beta * np.array(xn[i])) for i in range(N)]
 
