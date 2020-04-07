@@ -10,12 +10,12 @@ m = 3
 
 while var:
 
-    x1min = -5
-    x1max = 15
-    x2min = 10
-    x2max = 60
-    x3min = 10
-    x3max = 20
+    x1min = -30
+    x1max = 20
+    x2min = -70
+    x2max = -10
+    x3min = -70
+    x3max = -40
     xAvmin = (x1min + x2min + x3min) / 3  # Xcpmin
     xAvmax = (x1max + x2max + x3max) / 3  # Xcpmax
 
