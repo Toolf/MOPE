@@ -6,7 +6,7 @@ from numpy.linalg import solve
 
 
 def start(m):
-    x1, x2, x3 = [-15, 30], [30, 80], [30, 35]
+    x1, x2, x3 = [-30, 0], [-25, 10], [-25, -5]
     m, N, l = m, 15, 1.73  # кількість повторень кожної комбінації &  кількість повторення дослідів
 
     x_avg = [(max(x1) + max(x2) + max(x3)) / 3, (min(x1) + min(x2) + min(x3)) / 3]  # Xcр(max) & Xср(min)
@@ -44,9 +44,9 @@ def start(m):
 
     while True:
         # формування Y
-        y = [[round(4.4 + 8.3 * x[0][j] + 3.5 * x[1][j] + 8 * x[2][j] + 2.9 * x[0][j] * x[0][j] + 0.3 * x[1][j] * x[1][j] +
-                    2.3 * x[2][j] * x[2][j] + 3.4 * x[0][j] * x[1][j] + 0.3 * x[0][j] * x[2][j] + 9.3 * x[1][j] * x[2][j] +
-                    8.3 * x[0][j] * x[1][j] * x[2][j] + randrange(0, 10) - 5, 2) for i in range(m)] for j in range(N)]
+        y = [[round(0.1 + 1.6 * x[0][j] + 5.7 * x[1][j] + 2.1 * x[2][j] + 5.6 * x[0][j] * x[0][j] + 0.8 * x[1][j] * x[1][j] +
+                    5.7 * x[2][j] * x[2][j] + 8.2 * x[0][j] * x[1][j] + 0.5 * x[0][j] * x[2][j] + 1.7 * x[1][j] * x[2][j] +
+                    0.1 * x[0][j] * x[1][j] * x[2][j] + randrange(0, 10) - 5, 2) for i in range(m)] for j in range(N)]
         arr_avg = lambda arr: round(sum(arr) / len(arr), 4)
         y_avg = list(map(arr_avg, y))  # середнє значення Y
 
