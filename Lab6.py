@@ -3,6 +3,9 @@ from scipy.stats import f, t
 from functools import partial
 from random import randrange
 from numpy.linalg import solve
+import timeit
+import os
+import sys
 
 
 def start(m):
@@ -40,17 +43,20 @@ def start(m):
 
     xxx2 = [round(x * y * z, 3) for x, y, z in zip(x[0], x[1], x[2])]
 
-    x_x = [[round(x[j][i] ** 2, 3) for i in range(N)] for j in range(3)]  # натуральні значення факторів для квадрат. членів
+    x_x = [[round(x[j][i] ** 2, 3) for i in range(N)] for j in
+           range(3)]  # натуральні значення факторів для квадрат. членів
 
     while True:
         # формування Y
-        y = [[round(0.1 + 1.6 * x[0][j] + 5.7 * x[1][j] + 2.1 * x[2][j] + 5.6 * x[0][j] * x[0][j] + 0.8 * x[1][j] * x[1][j] +
-                    5.7 * x[2][j] * x[2][j] + 8.2 * x[0][j] * x[1][j] + 0.5 * x[0][j] * x[2][j] + 1.7 * x[1][j] * x[2][j] +
-                    0.1 * x[0][j] * x[1][j] * x[2][j] + randrange(0, 10) - 5, 2) for i in range(m)] for j in range(N)]
+        y = [[round(
+            0.1 + 1.6 * x[0][j] + 5.7 * x[1][j] + 2.1 * x[2][j] + 5.6 * x[0][j] * x[0][j] + 0.8 * x[1][j] * x[1][j] +
+            5.7 * x[2][j] * x[2][j] + 8.2 * x[0][j] * x[1][j] + 0.5 * x[0][j] * x[2][j] + 1.7 * x[1][j] * x[2][j] +
+            0.1 * x[0][j] * x[1][j] * x[2][j] + randrange(0, 10) - 5, 2) for i in range(m)] for j in range(N)]
         arr_avg = lambda arr: round(sum(arr) / len(arr), 4)
         y_avg = list(map(arr_avg, y))  # середнє значення Y
 
-        dispersions = [sum([((y[i][j] - y_avg[i]) ** 2) / m for j in range(m)]) for i in range(N)]  # дисперсії по рядках
+        dispersions = [sum([((y[i][j] - y_avg[i]) ** 2) / m for j in range(m)]) for i in
+                       range(N)]  # дисперсії по рядках
         x_matrix = x + xx2 + [xxx2] + x_x  # повна матриця з натуральними значеннями факторів
         norm_matrix = xn + xx + [xxx] + x_xn  # повна матриця з нормованими значеннями факторів
 
@@ -70,14 +76,16 @@ def start(m):
         row_format_norm = "|{:^3}" + "|{:^8}" * (len(table_factors_1)) + "|{:^8}" * (len(table_factors_2))
         row_format = "|{:^3}" + "|{:^8}" * (len(table_factors_1)) + "|{:^10}" * (len(table_factors_2)) + "|{:^10}" * (
             len(table_y)) + "|{:^10}"
-        separator_format_norm = "+{0:-^3s}" + "+{0:-^8s}" * (len(table_factors_1)) + "+{0:-^8s}" * (len(table_factors_2))
+        separator_format_norm = "+{0:-^3s}" + "+{0:-^8s}" * (len(table_factors_1)) + "+{0:-^8s}" * (
+            len(table_factors_2))
         separator_format = "+{0:-^3s}" + "+{0:-^8s}" * (len(table_factors_1)) + "+{0:-^10s}" * (
             len(table_factors_2)) + "+{0:-^10s}" * (len(table_y)) + "+{0:-^10s}"
         my_sep_norm = "|{:^93s}|\n"
         my_sep = "|{:^140s}|\n" if m == 2 else "|{:^151s}|\n"
         # Нормальні значення
         print(header_format_norm.format("=") + "+\n" + my_sep_norm.format("Матриця ПФЕ (нормальні значення факторів)") +
-              header_format_norm.format("=") + "+\n" + row_format_norm.format(other[0], *table_factors_1, *table_factors_2)
+              header_format_norm.format("=") + "+\n" + row_format_norm.format(other[0], *table_factors_1,
+                                                                              *table_factors_2)
               + "|\n" + header_format_norm.format("=") + "+")
 
         for i in range(N):
@@ -92,7 +100,8 @@ def start(m):
 
         # Натуральні значення
         print(header_format.format("=") + "+\n" + my_sep.format("Матриця ПФЕ (натуральні значення факторів)") +
-              header_format.format("=") + "+\n" + row_format.format(other[0], *table_factors_1, *table_factors_2, *table_y,
+              header_format.format("=") + "+\n" + row_format.format(other[0], *table_factors_1, *table_factors_2,
+                                                                    *table_y,
                                                                     other[1]) + "|\n" + header_format.format("=") + "+")
 
         for i in range(N):
@@ -104,21 +113,17 @@ def start(m):
             for j in range(m): print("{:^ 10}|".format(y[i][j]), end="")
             print("{:^10.2f}|".format(y_avg[i]))
 
-
-        def a (first, second):
+        def a(first, second):
             return sum([x_matrix[first - 1][j] * x_matrix[second - 1][j] / N for j in range(N)])
 
-
-        def find_a (num):
+        def find_a(num):
             return sum([y_avg[j] * x_matrix[num - 1][j] / N for j in range(N)])
 
-
-        def check (b_lst, k):
+        def check(b_lst, k):
             return b_lst[0] + b_lst[1] * x_matrix[0][k] + b_lst[2] * x_matrix[1][k] + b_lst[3] * x_matrix[2][k] + \
                    b_lst[4] * x_matrix[3][k] + b_lst[5] * x_matrix[4][k] + b_lst[6] * x_matrix[5][k] + \
                    b_lst[7] * x_matrix[6][k] + b_lst[8] * x_matrix[7][k] + b_lst[9] * x_matrix[8][k] + \
                    b_lst[10] * x_matrix[9][k]
-
 
         unknown = [[1, mx[0], mx[1], mx[2], mx[3], mx[4], mx[5], mx[6], mx[7], mx[8], mx[9]],
                    # ліва частина рівнянь з невідомими для пошуку коефіцієнтів b (приклад в методі)
@@ -146,16 +151,13 @@ def start(m):
                                              f"{b[9]:.3f}*X22^2 + {b[10]:.3f}*X33^2\n\n\tПеревірка:")
         for i in range(N): print("ŷ{} = {:.3f} ≈ {:.3f}".format((i + 1), check(b, i), y_avg[i]))
 
-
-
         # Критерій Кохрена
-        def table_fisher (prob, n, m, d):
+        def table_fisher(prob, n, m, d):
             x_vec = [i * 0.001 for i in range(int(10 / 0.001))]
             f3 = (m - 1) * n
             for i in x_vec:
                 if abs(f.cdf(i, n - d, f3) - prob) < 0.0001:
                     return i
-
 
         f1, f2 = m - 1, N
         f3 = f1 * f2
@@ -180,18 +182,21 @@ def start(m):
             for i in range(len(t_list)):
                 if t_list[i] < T:
                     b[i] = 0
-                    print("\tt{} = {} => коефіцієнт незначимий, його слід виключити з рів-ня регресії".format(i, t_list[i]))
+                    print("\tt{} = {} => коефіцієнт незначимий, його слід виключити з рів-ня регресії".format(i, t_list[
+                        i]))
                 else:
                     print("\tt{} = {} => коефіцієнт значимий".format(i, t_list[i]))
                     d += 1
 
-            print("\nОтже, кіл-ть значимих коеф. d =", d, "\n\n\tРів-ня регресії з урахуванням критерія Стьюдента:\nŷ = ",
+            print("\nОтже, кіл-ть значимих коеф. d =", d,
+                  "\n\n\tРів-ня регресії з урахуванням критерія Стьюдента:\nŷ = ",
                   end="")
 
             #  Квадратичне рівняння з урахуванням Ст'юдента
             print("{:.3f}".format(b[0]), end="") if b[0] != 0 else None
             for i in range(1, 10):
-                print(" + {:.3f}*{}".format(b[i], (table_factors_1 + table_factors_2)[i]), end="") if b[i] != 0 else None
+                print(" + {:.3f}*{}".format(b[i], (table_factors_1 + table_factors_2)[i]), end="") if b[
+                                                                                                          i] != 0 else None
             # Квадратичне рівняння з урахуванням Ст'юдента
 
             print("\n\n\tПеревірка при підстановці в спрощене рів-ня регресії:")
@@ -218,5 +223,16 @@ def start(m):
             start(m)
 
 
+class NullStdout:
+    def write(self, *args, **kwargs):
+        pass
+
+
 if __name__ == '__main__':
-    start(m=2)
+    time = timeit.Timer(partial(start, 2))
+    n = 100
+    prev_stdout = sys.stdout
+    sys.stdout = NullStdout()
+    res = time.timeit(n) / n
+    sys.stdout = prev_stdout
+    print(res)
